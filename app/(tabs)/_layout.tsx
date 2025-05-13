@@ -1,45 +1,64 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
-
-import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import React from 'react';
+import ExploreScreen from './explore';
+import IndexScreen from './index';
+import InventoryScreen from './inventory';
 
-export default function TabLayout() {
+const Drawer = createDrawerNavigator();
+
+export default function DrawerLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
+    <Drawer.Navigator
+      initialRouteName="Home"
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        drawerActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
+        drawerType: typeof window !== 'undefined' && window.innerWidth >= 768 ? 'permanent' : 'front',
+        drawerStyle: {
+          maxWidth: 240,
+        },
+        drawerContentContainerStyle: {
+          paddingLeft: 0,
+          paddingRight: 0,
+        },
+        drawerItemStyle: {
+          marginTop: 8,
+          borderRadius: 0,
+        },
+      }}
+    >
+      <Drawer.Screen
+        name="Home"
+        component={IndexScreen}
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          drawerIcon: ({ color, size }: { color: string; size: number }) => (
+            <IconSymbol size={size ?? 28} name="house.fill" color={color} />
+          ),
         }}
       />
-      <Tabs.Screen
-        name="explore"
+      <Drawer.Screen
+        name="Explore"
+        component={ExploreScreen}
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          drawerIcon: ({ color, size }: { color: string; size: number }) => (
+            <IconSymbol size={size ?? 28} name="paperplane.fill" color={color} />
+          ),
         }}
       />
-    </Tabs>
+      <Drawer.Screen
+        name="Inventory"
+        component={InventoryScreen}
+        options={{
+          drawerIcon: ({ color, size }: { color: string; size: number }) => (
+            <IconSymbol size={size ?? 28} name="mail.fill" color={color} />
+          ),
+        }}
+      />
+    </Drawer.Navigator>
   );
 }
