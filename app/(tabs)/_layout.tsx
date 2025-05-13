@@ -3,7 +3,6 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import React from 'react';
-import ExploreScreen from './explore';
 import IndexScreen from './index';
 import InventoryScreen from './inventory';
 
@@ -38,15 +37,6 @@ export default function DrawerLayout() {
         options={{
           drawerIcon: ({ color, size }: { color: string; size: number }) => (
             <IconSymbol size={size ?? 28} name="house.fill" color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="Explore"
-        component={ExploreScreen}
-        options={{
-          drawerIcon: ({ color, size }: { color: string; size: number }) => (
-            <IconSymbol size={size ?? 28} name="paperplane.fill" color={color} />
           ),
         }}
       />
