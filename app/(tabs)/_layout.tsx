@@ -2,7 +2,6 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import React from 'react';
 import IndexScreen from './index';
 import InventoryScreen from './inventory';
 
@@ -47,6 +46,13 @@ export default function DrawerLayout() {
           drawerIcon: ({ color, size }: { color: string; size: number }) => (
             <IconSymbol size={size ?? 28} name="mail.fill" color={color} />
           ),
+        }}
+      />
+      <Drawer.Screen
+        name="checklist"
+        options={{
+          title: 'Checklist',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="checklist" color={color} />,
         }}
       />
     </Drawer.Navigator>
