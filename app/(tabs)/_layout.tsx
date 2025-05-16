@@ -50,10 +50,10 @@ export default function DrawerLayout() {
         }}
       />
       <Drawer.Screen
-        name="checklist"
+        name="delivery-checklist"
         component={Checklist}
         options={{
-          title: 'Checklist',
+          title: 'Delivery Checklist',
           drawerIcon: ({ color }) => <IconSymbol size={28} name="checklist" color={color} />,
         }}
       />
