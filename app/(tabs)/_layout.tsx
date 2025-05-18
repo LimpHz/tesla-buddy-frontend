@@ -8,13 +8,13 @@ import { Toggle } from '@ui-kitten/components';
 import { useThemeContext } from '../ThemeContext';
 import { View } from 'react-native';
 
-const Drawer = createDrawerNavigator();
+const { Navigator, Screen } = createDrawerNavigator();
 
 export default function DrawerLayout() {
   const { theme, toggleTheme } = useThemeContext();
 
   return (
-    <Drawer.Navigator
+    <Navigator
       initialRouteName="home"
       screenOptions={{
         drawerActiveTintColor: Colors[theme ?? 'light'].tint,
@@ -34,7 +34,7 @@ export default function DrawerLayout() {
         },
         drawerInactiveTintColor: Colors[theme ?? 'light'].tint
       }}
-      drawerContent={(props) => (
+      drawerContent={(props: any) => (
         <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
           <DrawerItemList {...props} />
           <View style={{ flexDirection: 'row', alignItems: 'center', margin: 16, marginTop: 'auto', alignSelf: 'center' }}>
@@ -48,7 +48,7 @@ export default function DrawerLayout() {
         </DrawerContentScrollView>
       )}
     >
-      <Drawer.Screen
+      <Screen
         name="home"
         component={IndexScreen}
         options={{
@@ -58,7 +58,7 @@ export default function DrawerLayout() {
           ),
         }}
       />
-      <Drawer.Screen
+      <Screen
         name="inventory"
         component={InventoryScreen}
         options={{
@@ -68,7 +68,7 @@ export default function DrawerLayout() {
           ),
         }}
       />
-      <Drawer.Screen
+      <Screen
         name="delivery-checklist"
         component={Checklist}
         options={{
@@ -76,6 +76,6 @@ export default function DrawerLayout() {
           drawerIcon: ({ color }) => <IconSymbol size={28} name="checklist" color={color} />,
         }}
       />
-    </Drawer.Navigator>
+    </Navigator>
   );
 }

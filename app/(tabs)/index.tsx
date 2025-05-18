@@ -58,10 +58,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    backgroundColor: 'transparent',
   },
   stepContainer: {
     gap: 8,
     marginBottom: 8,
+    backgroundColor: 'transparent',
   },
   reactLogo: {
     height: 178,

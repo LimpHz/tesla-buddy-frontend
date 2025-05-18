@@ -1,13 +1,10 @@
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { StyledTextInput } from '@/components/StyledTextInput';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ArrangeByOptions, Conditions, Models } from '@limphz/tesla-api-utilities/constants';
-import { IndexPath, Select, SelectItem } from '@ui-kitten/components';
+import { IndexPath, Input, Layout, Select, SelectItem, Text } from '@ui-kitten/components';
 import { useState } from 'react';
 
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { TeslaInventoryService } from '../services/tesla-inventory.service';
 
 export default function InventoryScreen() {
@@ -55,9 +52,9 @@ export default function InventoryScreen() {
           style={styles.headerImage}
         />
       }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Inventory</ThemedText>
-      </ThemedView>
+      <Layout style={styles.titleContainer}>
+        <Text category="h2">Inventory</Text>
+      </Layout>
       <View style={{ gap: 8, marginBottom: 16 }}>
         {/* Model selection as buttons */}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -114,9 +111,9 @@ export default function InventoryScreen() {
               padding: 0, // Remove extra padding
               backgroundColor: '#222',
               justifyContent: 'center',
-              height: 40, // Match StyledTextInput height
-              overflow: 'hidden', // Prevent label from pushing dropdown down
-              position: 'relative',
+              height: 40, // Match Input height
+              //overflow: 'hidden', // Prevent label from pushing dropdown down
+              //position: 'relative',
             }}
           >
             <Select
@@ -124,19 +121,20 @@ export default function InventoryScreen() {
               onSelect={index => setArrangeByIndex(index)}
               style={styles.dropdown}
             >
-              {Object.entries(ArrangeByOptions).map(([key, value]) => (
+              {/* {Object.entries(ArrangeByOptions).map(([key, value]) => (
                 <SelectItem key={key} title={value} />
-              ))}
+              ))} */}
+              <SelectItem title={ArrangeByOptions.SAVINGS} />
             </Select>
           </View>
-          <StyledTextInput placeholder="Order" value={order} onChangeText={setOrder} />
-          <StyledTextInput placeholder="Market" value={market} onChangeText={setMarket} />
-          <StyledTextInput placeholder="Language" value={language} onChangeText={setLanguage} />
-          <StyledTextInput placeholder="Super Region" value={superRegion} onChangeText={setSuperRegion} />
-          <StyledTextInput placeholder="Payment Type" value={paymentType} onChangeText={setPaymentType} />
-          <StyledTextInput placeholder="Payment Range" value={paymentRange} onChangeText={setPaymentRange} />
-          <StyledTextInput placeholder="Zip" value={zip} onChangeText={setZip} />
-          <StyledTextInput placeholder="Region" value={region} onChangeText={setRegion} />
+          <Input placeholder="Order" value={order} onChangeText={setOrder} />
+          <Input placeholder="Market" value={market} onChangeText={setMarket} />
+          <Input placeholder="Language" value={language} onChangeText={setLanguage} />
+          <Input placeholder="Super Region" value={superRegion} onChangeText={setSuperRegion} />
+          <Input placeholder="Payment Type" value={paymentType} onChangeText={setPaymentType} />
+          <Input placeholder="Payment Range" value={paymentRange} onChangeText={setPaymentRange} />
+          <Input placeholder="Zip" value={zip} onChangeText={setZip} />
+          <Input placeholder="Region" value={region} onChangeText={setRegion} />
         </View>
         <View style={{ alignItems: 'center', width: '100%' }}>
           <TouchableOpacity style={styles.button} onPress={() => { teslaInventoryService.fetchInventory({
@@ -146,7 +144,9 @@ export default function InventoryScreen() {
                   options: {
                       paint: ''
                   },
-                  arrangeby: arrangeby,
+                  arrangeby: Object.entries(ArrangeByOptions).at(
+                    Array.isArray(arrangeByIndex) ? arrangeByIndex[0].row : arrangeByIndex.row
+                  )?.[1],
                   order: order,
                   market: market,
                   language: language,
@@ -167,7 +167,7 @@ export default function InventoryScreen() {
           </TouchableOpacity>
         </View>
       </View>
-      <ThemedText>This page is under construction.</ThemedText>
+      <Text>This page is under construction.</Text>
     </ParallaxScrollView>
   );
 }

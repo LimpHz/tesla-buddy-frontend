@@ -9,9 +9,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "android-clear-cache": "expo start-clear-cache --android",
-    "ios-clear-cache": "expo start-clear-cache --ios",
-    "web-clear-cache": "expo start-clear-cache --web",
+    "android-clear-cache": "npm run start-clear-cache --android",
+    "ios-clear-cache": "npm run start-clear-cache --ios",
+    "web-clear-cache": "npm run start-clear-cache --web",
     "lint": "expo lint"
   },
   "dependencies": {

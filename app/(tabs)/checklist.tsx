@@ -1,8 +1,8 @@
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { MarkdownService } from '@/services/markdown.service';
+import { Layout } from '@ui-kitten/components';
 import { useEffect, useState } from 'react';
 
 import { ActivityIndicator, StyleSheet } from 'react-native';
@@ -44,7 +44,7 @@ export default function Checklist() {
                     style={styles.reactLogo}
                 />
             }>
-            <ThemedView style={styles.container}>
+            <Layout style={styles.container}>
                 {loading ? (
                     <ActivityIndicator size="large" style={styles.loader} />
                 ) : (
@@ -62,7 +62,7 @@ export default function Checklist() {
                         }}
                     />
                 )}
-            </ThemedView>
+            </Layout>
         </ParallaxScrollView>
     );
 }
