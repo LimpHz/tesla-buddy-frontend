@@ -3,7 +3,8 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { MarkdownService } from '@/services/markdown.service';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import { ActivityIndicator, StyleSheet } from 'react-native';
 
 export default function Checklist() {

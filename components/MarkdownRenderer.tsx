@@ -1,6 +1,7 @@
+import { useThemeContext } from '@/app/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import React, { JSX, useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 
 interface MarkdownRendererProps {
@@ -16,8 +17,8 @@ export default function MarkdownRenderer({
   interactive = true,
   onCheckboxToggle
 }: MarkdownRendererProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { theme } = useThemeContext();
+  const isDark = theme === 'dark';
   
   // Convert the markdown content to track checkbox states
   const [checkedItems, setCheckedItems] = useState<{[key: string]: boolean}>({});

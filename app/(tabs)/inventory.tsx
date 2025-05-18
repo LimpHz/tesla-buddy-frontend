@@ -4,8 +4,9 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ArrangeByOptions, Conditions, Models } from '@limphz/tesla-api-utilities/constants';
-import { Picker } from '@react-native-picker/picker';
-import React, { useState } from 'react';
+import { IndexPath, Select, SelectItem } from '@ui-kitten/components';
+import { useState } from 'react';
+
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TeslaInventoryService } from '../services/tesla-inventory.service';
 
@@ -13,7 +14,7 @@ export default function InventoryScreen() {
   // Example state for each VehicleSpecs property
   const [model, setModel] = useState('');
   const [condition, setCondition] = useState('');
-  const [arrangeby, setArrangeby] = useState('');
+  const [arrangeByIndex, setArrangeByIndex] = useState<IndexPath | IndexPath[]>(new IndexPath(0));
   const [order, setOrder] = useState('');
   const [market, setMarket] = useState('');
   const [language, setLanguage] = useState('');
@@ -118,33 +119,15 @@ export default function InventoryScreen() {
               position: 'relative',
             }}
           >
-            {(arrangeby !== '') && (
-              <Text
-                style={{
-                  color: '#aaa',
-                  fontSize: 12,
-                  position: 'absolute',
-                  top: 2,
-                  left: 8,
-                  zIndex: 2,
-                  backgroundColor: '#222',
-                  paddingHorizontal: 2,
-                }}
-              >
-                Arrange By
-              </Text>
-            )}
-            <Picker
-              selectedValue={arrangeby}
-              onValueChange={setArrangeby}
-              style={[styles.dropdown, { height: 40, marginTop: (arrangeby !== '') ? 10 : 0 }]}
-              dropdownIconColor="#fff"
+            <Select
+              selectedIndex={arrangeByIndex}
+              onSelect={index => setArrangeByIndex(index)}
+              style={styles.dropdown}
             >
-              <Picker.Item label="Arrange By" value="" color="#888" />
               {Object.entries(ArrangeByOptions).map(([key, value]) => (
-                <Picker.Item key={key} label={value} value={value} />
+                <SelectItem key={key} title={value} />
               ))}
-            </Picker>
+            </Select>
           </View>
           <StyledTextInput placeholder="Order" value={order} onChangeText={setOrder} />
           <StyledTextInput placeholder="Market" value={market} onChangeText={setMarket} />
