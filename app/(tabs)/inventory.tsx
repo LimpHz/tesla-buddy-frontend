@@ -120,9 +120,11 @@ export default function InventoryScreen() {
         </Layout>
         <Layout style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
           <Select
-            options={Object.entries(Ordering).map(([key, value]) => (
-              {label: key, value: value}
-            ))}
+            options={
+              Object.entries(Ordering).map(([key, value]) => (
+                { label: key, value: value }
+              ))
+            }
             onSelect={(value) => setOrder(value)}
           />
           <Input placeholder="Market" value={market} onChangeText={setMarket} />
