@@ -1,12 +1,11 @@
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ArrangeByOptions, Conditions, Models, Ordering } from '@limphz/tesla-api-utilities/constants';
-import { Button, Input, Layout, Radio, RadioGroup, Text, useTheme } from '@ui-kitten/components';
+import { Button, Input, Layout, Radio, RadioGroup, Text } from '@ui-kitten/components';
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { TeslaInventoryService } from '../services/tesla-inventory.service';
-import Select from '@/components/ui/Select';
-import { Picker } from '@react-native-picker/picker';
+import { Select } from '@/components/ui/Select';
 
 export default function InventoryScreen() {
   // Example state for each VehicleSpecs property
@@ -41,8 +40,6 @@ export default function InventoryScreen() {
       value: Models.MODEL_X
     }
   ];
-
-  const theme = useTheme();
 
   return (
     <ParallaxScrollView
@@ -122,33 +119,12 @@ export default function InventoryScreen() {
           </RadioGroup>
         </Layout>
         <Layout style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-          {/* <Select
-            options={[
-              {label: 'asdf', value: '123'}
-            ]}
-          >
-          </Select> */}
-          <Picker
-            selectedValue={order}
-            onValueChange={(value, index) => setOrder(value)}
-            style={{
-              padding: 9,
-              borderRadius: 6,
-              borderStyle: 'solid',
-              borderColor: theme['border-basic-color-3'],
-              borderWidth: 1,
-              backgroundColor: theme['background-basic-color-1'],
-              color: theme['text-basic-color'],
-              minWidth: 150,
-              outline: 'none',
-              fontSize: 16,
-              fontFamily: 'inherit',
-            }}
-          >
-            {Object.entries(Ordering).map(([key, value]) => (
-              <Picker.Item key={key} label={key} value={value} />
+          <Select
+            options={Object.entries(Ordering).map(([key, value]) => (
+              {label: key, value: value}
             ))}
-          </Picker>
+            onSelect={(value) => setOrder(value)}
+          />
           <Input placeholder="Market" value={market} onChangeText={setMarket} />
           <Input placeholder="Language" value={language} onChangeText={setLanguage} />
           <Input placeholder="Super Region" value={superRegion} onChangeText={setSuperRegion} />
