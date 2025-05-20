@@ -20,7 +20,7 @@
     "@expo/vector-icons": "^14.1.0",
     "@legendapp/motion": "^2.4.0",
     "@limphz/tesla-api-utilities": "^0.1.15-alpha",
-    "@react-native-picker/picker": "^2.11.0",
+    "@react-native-picker/picker": "2.11.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/drawer": "^7.3.12",
     "@react-navigation/elements": "^2.3.8",
