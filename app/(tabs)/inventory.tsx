@@ -21,6 +21,7 @@ export default function InventoryScreen() {
   const [zip, setZip] = useState('');
   const [region, setRegion] = useState('');
   const [inventoryResult, setInventoryResult] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
   const teslaInventoryService = new TeslaInventoryService();
   const modelOptions = [
@@ -43,29 +44,36 @@ export default function InventoryScreen() {
   ];
 
   const handleFetchInventory = async () => {
-    const result = await teslaInventoryService.fetchInventory({
-      query: {
-        model: model,
-        condition: condition,
-        options: { paint: '' },
-        arrangeby: Object.entries(ArrangeByOptions).at(arrangeByIndex ?? 0)?.[1],
-        order: order,
-        market: market,
-        language: language,
-        super_region: superRegion,
-        PaymentType: paymentType,
-        paymentRange: parseInt(paymentRange) || 0,
-        zip: zip,
-        region: region
-      },
-      offset: 0,
-      count: 0,
-      outsideOffset: 0,
-      outsideSearch: false,
-      isFalconDeliverySelectionEnabled: true,
-      version: 'v2'
-    });
-    setInventoryResult(result);
+    setLoading(true);
+
+    try {
+      const result = await teslaInventoryService.fetchInventory({
+        query: {
+          model: model,
+          condition: condition,
+          options: { paint: '' },
+          arrangeby: Object.entries(ArrangeByOptions).at(arrangeByIndex ?? 0)?.[1],
+          order: order,
+          market: market,
+          language: language,
+          super_region: superRegion,
+          PaymentType: paymentType,
+          paymentRange: parseInt(paymentRange) || 0,
+          zip: zip,
+          region: region
+        },
+        offset: 0,
+        count: 0,
+        outsideOffset: 0,
+        outsideSearch: false,
+        isFalconDeliverySelectionEnabled: true,
+        version: 'v2'
+      });
+  
+      setInventoryResult(result);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -179,10 +187,15 @@ export default function InventoryScreen() {
         <Layout style={{ alignItems: 'center', width: '100%' }}>
           <Button 
             style={styles.button}
-            onPress={handleFetchInventory}>
-              <Text style={styles.buttonText}>Search</Text>
+            onPress={handleFetchInventory}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>{loading ? 'Loading...' : 'Search'}</Text>
           </Button>
-          {inventoryResult && (
+          {loading && (
+            <Text style={{ marginTop: 8 }}>Loading inventory...</Text>
+          )}
+          {inventoryResult && !loading && (
             <Layout style={{ marginTop: 16, width: '100%' }}>
               <Text category="s1">Inventory Result:</Text>
               <Text style={{ fontSize: 12, marginTop: 4 }}>
