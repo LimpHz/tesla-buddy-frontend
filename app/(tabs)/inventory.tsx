@@ -1,6 +1,6 @@
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { ArrangeByOptions, Conditions, Models, Ordering } from '@limphz/tesla-api-utilities/constants';
+import { ArrangeByOptions, Conditions, Markets, Models, Ordering, Regions } from '@limphz/tesla-api-utilities/constants';
 import { Button, Input, Layout, Radio, RadioGroup, Text } from '@ui-kitten/components';
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
@@ -20,6 +20,7 @@ export default function InventoryScreen() {
   const [paymentRange, setPaymentRange] = useState('');
   const [zip, setZip] = useState('');
   const [region, setRegion] = useState('');
+  const [inventoryResult, setInventoryResult] = useState<any>(null);
 
   const teslaInventoryService = new TeslaInventoryService();
   const modelOptions = [
@@ -40,6 +41,32 @@ export default function InventoryScreen() {
       value: Models.MODEL_X
     }
   ];
+
+  const handleFetchInventory = async () => {
+    const result = await teslaInventoryService.fetchInventory({
+      query: {
+        model: model,
+        condition: condition,
+        options: { paint: '' },
+        arrangeby: Object.entries(ArrangeByOptions).at(arrangeByIndex ?? 0)?.[1],
+        order: order,
+        market: market,
+        language: language,
+        super_region: superRegion,
+        PaymentType: paymentType,
+        paymentRange: parseInt(paymentRange) || 0,
+        zip: zip,
+        region: region
+      },
+      offset: 0,
+      count: 0,
+      outsideOffset: 0,
+      outsideSearch: false,
+      isFalconDeliverySelectionEnabled: true,
+      version: 'v2'
+    });
+    setInventoryResult(result);
+  };
 
   return (
     <ParallaxScrollView
@@ -127,43 +154,44 @@ export default function InventoryScreen() {
             }
             onSelect={(value) => setOrder(value)}
           />
-          <Input placeholder="Market" value={market} onChangeText={setMarket} />
+          <Select
+            options={
+              Object.entries(Markets).map(([key, value]) => (
+                { label: key, value: value }
+              ))
+            }
+            onSelect={(value) => setMarket(value)}
+          />
           <Input placeholder="Language" value={language} onChangeText={setLanguage} />
           <Input placeholder="Super Region" value={superRegion} onChangeText={setSuperRegion} />
           <Input placeholder="Payment Type" value={paymentType} onChangeText={setPaymentType} />
           <Input placeholder="Payment Range" value={paymentRange} onChangeText={setPaymentRange} />
           <Input placeholder="Zip" value={zip} onChangeText={setZip} />
-          <Input placeholder="Region" value={region} onChangeText={setRegion} />
+          <Select
+            options={
+              Object.entries(Regions).map(([key, value]) => (
+                { label: key, value: value }
+              ))
+            }
+            onSelect={(value) => setMarket(value)}
+          />
         </Layout>
         <Layout style={{ alignItems: 'center', width: '100%' }}>
-          <Button style={styles.button} onPress={() => { teslaInventoryService.fetchInventory({
-              query: {
-                  model: model,
-                  condition: condition,
-                  options: {
-                      paint: ''
-                  },
-                  arrangeby: Object.entries(ArrangeByOptions).at(
-                    arrangeByIndex ?? 0
-                  )?.[1],
-                  order: order,
-                  market: market,
-                  language: language,
-                  super_region: superRegion,
-                  PaymentType: paymentType,
-                  paymentRange: parseInt(paymentRange) || 0,
-                  zip: zip,
-                  region: region
-              },
-              offset: 0,
-              count: 0,
-              outsideOffset: 0,
-              outsideSearch: false,
-              isFalconDeliverySelectionEnabled: true,
-              version: 'v2'
-          }) }}>
-            <Text style={styles.buttonText}>Search</Text>
+          <Button 
+            style={styles.button}
+            onPress={handleFetchInventory}>
+              <Text style={styles.buttonText}>Search</Text>
           </Button>
+          {inventoryResult && (
+            <Layout style={{ marginTop: 16, width: '100%' }}>
+              <Text category="s1">Inventory Result:</Text>
+              <Text style={{ fontSize: 12, marginTop: 4 }}>
+                {typeof inventoryResult === 'object'
+                  ? JSON.stringify(inventoryResult, null, 2)
+                  : String(inventoryResult)}
+              </Text>
+            </Layout>
+          )}
         </Layout>
       </Layout>
     </ParallaxScrollView>
