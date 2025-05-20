@@ -1,8 +1,8 @@
 import { useThemeContext } from '@/app/ThemeContext';
-import { Ionicons } from '@expo/vector-icons';
 import React, { JSX, useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Markdown from 'react-native-markdown-display';
+import { CheckBox, Layout, Text } from '@ui-kitten/components';
 
 interface MarkdownRendererProps {
   content: string;
@@ -118,7 +118,7 @@ export default function MarkdownRenderer({
         };
         
         elements.push(
-          <TouchableOpacity 
+          <CheckBox 
             key={`checkbox-${index}`} 
             style={[
               styles.checkboxListItem,
@@ -127,22 +127,13 @@ export default function MarkdownRenderer({
             onPress={toggleCheckbox}
             disabled={!interactive}
           >
-            <View style={styles.checkbox}>
-              {isChecked && (
-                <Ionicons 
-                  name="checkmark" 
-                  size={16} 
-                  color={isDark ? '#FFFFFF' : '#000000'} 
-                />
-              )}
-            </View>
             <Text style={[
               styles.checkboxText,
               isChecked ? { textDecorationLine: 'line-through' } : {}
             ]}>
               {text}
             </Text>
-          </TouchableOpacity>
+          </CheckBox>
         );
       } else {
         // This is regular markdown content
@@ -235,8 +226,8 @@ export default function MarkdownRenderer({
   });
   
   return (
-    <View style={styles.container}>
+    <Layout style={styles.container}>
       {parseAndRenderContent()}
-    </View>
+    </Layout>
   );
 }

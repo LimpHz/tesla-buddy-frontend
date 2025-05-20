@@ -1,17 +1,16 @@
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ArrangeByOptions, Conditions, Models } from '@limphz/tesla-api-utilities/constants';
-import { IndexPath, Input, Layout, Select, SelectItem, Text } from '@ui-kitten/components';
+import { Button, Input, Layout, Radio, RadioGroup, Select, SelectItem, Text } from '@ui-kitten/components';
 import { useState } from 'react';
-
-import { Button, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { TeslaInventoryService } from '../services/tesla-inventory.service';
 
 export default function InventoryScreen() {
   // Example state for each VehicleSpecs property
   const [model, setModel] = useState('');
   const [condition, setCondition] = useState('');
-  const [arrangeByIndex, setArrangeByIndex] = useState<IndexPath | IndexPath[]>(new IndexPath(0));
+  const [arrangeByIndex, setArrangeByIndex] = useState<number | undefined>(0);
   const [order, setOrder] = useState('');
   const [market, setMarket] = useState('');
   const [language, setLanguage] = useState('');
@@ -55,21 +54,27 @@ export default function InventoryScreen() {
       <Layout style={styles.titleContainer}>
         <Text category="h2">Inventory</Text>
       </Layout>
-      <View style={{ gap: 8, marginBottom: 16 }}>
-        {/* Model selection as buttons */}
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+      <Layout style={{ gap: 8, marginBottom: 16 }}>
+        <Layout style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {modelOptions.map((option) => (
             <Button
               key={option.value}
-              title={option.name}
               onPress={() => setModel(option.value)}
-              color={model === option.value ? '#0a7ea4' : undefined}
-            />
+              style={[
+                styles.button,
+                {
+                  backgroundColor: model === option.value ? styles.button.backgroundColor : 'transparent',
+                  minWidth: 150
+                }
+              ]}
+            >
+              <Text style={{ color: model === option.value ? '#fff' : '#0a7ea4' }}>{option.name}</Text>
+            </Button>
           ))}
-        </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+        </Layout>
+        <Layout style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
           {Object.entries(Conditions).map(([key, value]) => (
-            <TouchableOpacity
+            <Button
               key={key}
               style={{
                 flexDirection: 'row',
@@ -80,13 +85,14 @@ export default function InventoryScreen() {
                 borderColor: condition === value ? '#0a7ea4' : '#ccc',
                 borderRadius: 16,
                 backgroundColor: condition === value ? '#0a7ea4' : 'transparent',
+                height: 16
               }}
               onPress={() => setCondition(value)}
             >
-              <View
+              <Layout
                 style={{
-                  height: 16,
-                  width: 16,
+                  height: 12,
+                  width: 12,
                   borderRadius: 8,
                   borderWidth: 2,
                   borderColor: condition === value ? '#fff' : '#0a7ea4',
@@ -95,38 +101,23 @@ export default function InventoryScreen() {
                 }}
               />
               <Text style={{ color: condition === value ? '#fff' : '#0a7ea4' }}>{key}</Text>
-            </TouchableOpacity>
+            </Button>
           ))}
-        </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-          {/* Arrange By Dropdown */}
-          <View
-            style={{
-              minWidth: 120,
-              maxWidth: 200,
-              borderWidth: 1,
-              borderRadius: 4,
-              borderColor: '#fff',
-              marginRight: 8,
-              padding: 0, // Remove extra padding
-              backgroundColor: '#222',
-              justifyContent: 'center',
-              height: 40, // Match Input height
-              //overflow: 'hidden', // Prevent label from pushing dropdown down
-              //position: 'relative',
-            }}
+        </Layout>
+        <Layout style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+          <Text style={{ marginRight: 24 }}>Arrange By:</Text>
+          <RadioGroup
+            selectedIndex={arrangeByIndex}
+            onChange={i => setArrangeByIndex(i)}
           >
-            <Select
-              selectedIndex={arrangeByIndex}
-              onSelect={index => setArrangeByIndex(index)}
-              style={styles.dropdown}
-            >
-              {/* {Object.entries(ArrangeByOptions).map(([key, value]) => (
-                <SelectItem key={key} title={value} />
-              ))} */}
-              <SelectItem title={ArrangeByOptions.SAVINGS} />
-            </Select>
-          </View>
+            {Object.entries(ArrangeByOptions).map(([key, value]) => (
+              <Radio key={key}>
+                <Text style={styles.radioText}>{value}</Text>
+              </Radio>
+            ))}
+          </RadioGroup>
+        </Layout>
+        <Layout style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
           <Input placeholder="Order" value={order} onChangeText={setOrder} />
           <Input placeholder="Market" value={market} onChangeText={setMarket} />
           <Input placeholder="Language" value={language} onChangeText={setLanguage} />
@@ -135,9 +126,9 @@ export default function InventoryScreen() {
           <Input placeholder="Payment Range" value={paymentRange} onChangeText={setPaymentRange} />
           <Input placeholder="Zip" value={zip} onChangeText={setZip} />
           <Input placeholder="Region" value={region} onChangeText={setRegion} />
-        </View>
-        <View style={{ alignItems: 'center', width: '100%' }}>
-          <TouchableOpacity style={styles.button} onPress={() => { teslaInventoryService.fetchInventory({
+        </Layout>
+        <Layout style={{ alignItems: 'center', width: '100%' }}>
+          <Button style={styles.button} onPress={() => { teslaInventoryService.fetchInventory({
               query: {
                   model: model,
                   condition: condition,
@@ -145,7 +136,7 @@ export default function InventoryScreen() {
                       paint: ''
                   },
                   arrangeby: Object.entries(ArrangeByOptions).at(
-                    Array.isArray(arrangeByIndex) ? arrangeByIndex[0].row : arrangeByIndex.row
+                    arrangeByIndex ?? 0
                   )?.[1],
                   order: order,
                   market: market,
@@ -164,10 +155,9 @@ export default function InventoryScreen() {
               version: 'v2'
           }) }}>
             <Text style={styles.buttonText}>Search</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <Text>This page is under construction.</Text>
+          </Button>
+        </Layout>
+      </Layout>
     </ParallaxScrollView>
   );
 }
@@ -199,5 +189,8 @@ const styles = StyleSheet.create({
     color: '#fff',
     backgroundColor: 'rgba(0,0,0,0)',
     minHeight: '100%'
+  },
+  radioText: {
+    fontSize: 18
   }
 });
