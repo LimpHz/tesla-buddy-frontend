@@ -63,7 +63,7 @@ export default function InventoryScreen() {
           region: region
         },
         offset: 0,
-        count: 0,
+        count: 50,
         outsideOffset: 0,
         outsideSearch: false,
         isFalconDeliverySelectionEnabled: true,
@@ -155,20 +155,24 @@ export default function InventoryScreen() {
         </Layout>
         <Layout style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
           <Select
+            placeholder='Order By'
             options={
               Object.entries(Ordering).map(([key, value]) => (
                 { label: key, value: value }
               ))
             }
             onSelect={(value) => setOrder(value)}
+            value={order}
           />
           <Select
+            placeholder='Market'
             options={
               Object.entries(Markets).map(([key, value]) => (
                 { label: key, value: value }
               ))
             }
-            onSelect={(value) => setMarket(value)}
+            onSelect={(value) => {console.log("Market set: " + value); setMarket(value)}}
+            value={market}
           />
           <Input placeholder="Language" value={language} onChangeText={setLanguage} />
           <Input placeholder="Super Region" value={superRegion} onChangeText={setSuperRegion} />
@@ -176,12 +180,14 @@ export default function InventoryScreen() {
           <Input placeholder="Payment Range" value={paymentRange} onChangeText={setPaymentRange} />
           <Input placeholder="Zip" value={zip} onChangeText={setZip} />
           <Select
+            placeholder='Region'
             options={
               Object.entries(Regions).map(([key, value]) => (
                 { label: key, value: value }
               ))
             }
-            onSelect={(value) => setMarket(value)}
+            onSelect={(value) => setRegion(value)}
+            value={region}
           />
         </Layout>
         <Layout style={{ alignItems: 'center', width: '100%' }}>
