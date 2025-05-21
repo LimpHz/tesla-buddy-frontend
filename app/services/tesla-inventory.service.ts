@@ -5,7 +5,6 @@ const BASE_URL = process.env.EXPO_PUBLIC_TESLA_API_BASE_URL;
 export class TeslaInventoryService {
     public async fetchInventory(query: VehicleSpecs): Promise<InventoryResponse> {
       try {
-        console.log("Base URL: " + BASE_URL);
         const response = await fetch(`${BASE_URL}api/inventory`, {
           method: 'POST',
           headers: {
@@ -14,7 +13,9 @@ export class TeslaInventoryService {
           body: JSON.stringify(query),
         });
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          response.text().then((text) => {
+            throw new Error(`HTTP error! status: ${response.status}\n${text}`);
+          });
         }
         return await response.json();
       } catch (error) {
