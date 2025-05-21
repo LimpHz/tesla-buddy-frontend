@@ -29,28 +29,50 @@ export const Select: React.FC<SelectProps> = ({
     const theme = useTheme();  
     const [visible, setVisible] = React.useState(false);
   
-  return(
-    <Picker
-        selectedValue={value}
-        onValueChange={(value, index) => onSelect(value)}
-        style={{
-            padding: 9,
-            borderRadius: 6,
-            borderStyle: 'solid',
-            borderColor: theme['border-basic-color-3'],
-            borderWidth: 1,
-            backgroundColor: theme['background-basic-color-1'],
-            color: theme['text-basic-color'],
-            minWidth: 150,
-            outline: 'none',
-            fontSize: 16,
-            fontFamily: 'inherit',
-        }}
-    >
-        {options.map(opt => (
-            <Picker.Item key={opt.value} label={opt.label} value={opt.value} />
-        ))}
-    </Picker>
+  return (
+    <Layout style={{ position: 'relative' }}>
+        <Text
+            style={{
+                fontSize: 12,
+                color: theme['text-hint-color'],
+                marginLeft: 4,
+                marginBottom: 2,
+                minHeight: 16,
+                opacity: placeholder !== '' && placeholder !== 'Select...' && value !== undefined ? 1 : 0
+            }}
+        >
+            {placeholder}
+        </Text>
+        <Picker
+            selectedValue={value}
+            onValueChange={(value, index) => {
+                if (value !== "") onSelect(value)
+            }}
+            style={{
+                padding: 9,
+                borderRadius: 6,
+                borderStyle: 'solid',
+                borderColor: theme['border-basic-color-3'],
+                borderWidth: 1,
+                backgroundColor: theme['background-basic-color-1'],
+                color: theme['text-basic-color'],
+                minWidth: 150,
+                outline: 'none',
+                fontSize: 16,
+                fontFamily: 'inherit',
+            }}
+        >
+            <Picker.Item
+                label={placeholder}
+                value=""
+                color={theme['text-hint-color']}
+                enabled={false}
+            />
+            {options.map(opt => (
+                <Picker.Item key={opt.value} label={opt.label} value={opt.value} />
+            ))}
+        </Picker>
+    </Layout>
   )
 };
 
