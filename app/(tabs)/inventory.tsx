@@ -1,11 +1,13 @@
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { ArrangeByOptions, Conditions, Markets, Models, Ordering, Regions } from '@limphz/tesla-api-utilities/constants';
-import { Button, Input, Layout, Radio, RadioGroup, Text } from '@ui-kitten/components';
+import { ArrangeByOptions, Conditions, Markets, Models, Ordering, PaymentTypes, Regions } from '@limphz/tesla-api-utilities/constants';
+import { Button, Card, CheckBox, Icon, Input, Layout, Radio, RadioGroup, Spinner, Text } from '@ui-kitten/components';
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { Linking, StyleSheet, View, ViewProps } from 'react-native';
 import { TeslaInventoryService } from '../services/tesla-inventory.service';
 import { Select } from '@/components/ui/Select';
+import { InventoryResponse, Vehicle } from '@limphz/tesla-api-utilities/models';
+import { setStringAsync } from 'expo-clipboard';  
 
 export default function InventoryScreen() {
   // Example state for each VehicleSpecs property
@@ -14,14 +16,16 @@ export default function InventoryScreen() {
   const [arrangeByIndex, setArrangeByIndex] = useState<number | undefined>(0);
   const [order, setOrder] = useState('');
   const [market, setMarket] = useState('');
-  const [language, setLanguage] = useState('');
-  const [superRegion, setSuperRegion] = useState('');
+  const [language, setLanguage] = useState('en');
+  const [superRegion, setSuperRegion] = useState('north america');
   const [paymentType, setPaymentType] = useState('');
   const [paymentRange, setPaymentRange] = useState('');
   const [zip, setZip] = useState('');
   const [region, setRegion] = useState('');
-  const [inventoryResult, setInventoryResult] = useState<any>(null);
+  const [inventoryResult, setInventoryResult] = useState<InventoryResponse | undefined>(undefined);
   const [loading, setLoading] = useState(false);
+  const [referral, setReferral] = useState('');
+  const [showFederalTaxCredit, setShowFederalTaxCredit] = useState(true);
 
   const teslaInventoryService = new TeslaInventoryService();
   const modelOptions = [
@@ -75,6 +79,56 @@ export default function InventoryScreen() {
       setLoading(false);
     }
   };
+
+  function getTeslaInventoryLinkForVin(vin: string): string {
+    return `https://www.tesla.com/${model}/order/${vin}?titleStatus=${condition}${referral !== '' ? `&referral=${referral}` : ''}&redirect=no#overview`;
+  }
+
+  const CardFooter = (res: Vehicle, props?: ViewProps): React.ReactElement => (
+    <View
+      {...props}
+      style={[props?.style, styles.footerContainer]}
+    >
+      <Text style={{ fontWeight: 'bold', flex: 1 }}>
+        ${showFederalTaxCredit && res.FederalIncentives.IsTaxIncentiveEligible 
+          ? res.FederalIncentives.PriceAfterTaxIncentive 
+          : res.TotalPrice}
+      </Text>
+      <Layout style={{ 
+        flexDirection: 'row', 
+        justifyContent: 'flex-end',
+      }}>
+        <Button
+          style={styles.footerControl}
+          size='small'
+          accessoryRight={props => <Icon {...props} name="email-outline" />}
+          onPress={async() => {
+            const url = getTeslaInventoryLinkForVin(res.VIN);
+            await setStringAsync(url);
+          }}
+          disabled={true}
+        />
+        <Button
+          style={styles.footerControl}
+          size='small'
+          accessoryRight={props => <Icon {...props} name="clipboard-outline" />}
+          onPress={async() => {
+            const url = getTeslaInventoryLinkForVin(res.VIN);
+            await setStringAsync(url);
+          }}
+        />
+        <Button
+          style={styles.footerControl}
+          size='small'
+          accessoryRight={props => <Icon {...props} name="navigation-2-outline" />}
+          onPress={() => {
+            const url = getTeslaInventoryLinkForVin(res.VIN);
+            Linking.openURL(url);
+          }}
+        />
+      </Layout>
+    </View>
+  );
 
   return (
     <ParallaxScrollView
@@ -139,6 +193,14 @@ export default function InventoryScreen() {
               <Text style={{ color: condition === value ? '#fff' : '#0a7ea4' }}>{key}</Text>
             </Button>
           ))}
+          <Input placeholder='Referral Code' value={referral} onChangeText={setReferral}></Input>
+          <CheckBox
+            checked={showFederalTaxCredit}
+            onChange={setShowFederalTaxCredit}
+            style={{ marginHorizontal: 28 }}
+          >
+            Show pricing after federal tax credit
+          </CheckBox>
         </Layout>
         <Layout style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
           <Text style={{ marginRight: 24 }}>Arrange By:</Text>
@@ -174,9 +236,18 @@ export default function InventoryScreen() {
             onSelect={(value) => {console.log("Market set: " + value); setMarket(value)}}
             value={market}
           />
-          <Input placeholder="Language" value={language} onChangeText={setLanguage} />
-          <Input placeholder="Super Region" value={superRegion} onChangeText={setSuperRegion} />
-          <Input placeholder="Payment Type" value={paymentType} onChangeText={setPaymentType} />
+          <Input placeholder="Language" value={language} onChangeText={setLanguage} disabled={true} />
+          <Input placeholder="Super Region" value={superRegion} onChangeText={setSuperRegion} disabled={true} />
+          <Select
+            placeholder='Payment Type'
+            options={
+              Object.entries(PaymentTypes).map(([key, value]) => (
+                { label: key, value: value }
+              ))
+            }
+            onSelect={(value) => setPaymentType(value)}
+            value={paymentType}
+          />
           <Input placeholder="Payment Range" value={paymentRange} onChangeText={setPaymentRange} />
           <Input placeholder="Zip" value={zip} onChangeText={setZip} />
           <Select
@@ -199,17 +270,60 @@ export default function InventoryScreen() {
             <Text style={styles.buttonText}>{loading ? 'Loading...' : 'Search'}</Text>
           </Button>
           {loading && (
-            <Text style={{ marginTop: 8 }}>Loading inventory...</Text>
+            <Layout style={{ marginTop: 40 }}>
+              <Spinner size='giant' />
+            </Layout>
           )}
           {inventoryResult && !loading && (
-            <Layout style={{ marginTop: 16, width: '100%' }}>
-              <Text category="s1">Inventory Result:</Text>
-              <Text style={{ fontSize: 12, marginTop: 4 }}>
-                {typeof inventoryResult === 'object'
-                  ? JSON.stringify(inventoryResult, null, 2)
-                  : String(inventoryResult)}
-              </Text>
-            </Layout>
+            <>
+              {inventoryResult !== undefined && (
+                <Text style={{ marginBottom: 12, marginTop: 12, alignSelf: 'center' }}>
+                  Total Results: {inventoryResult.total_matches_found}
+                </Text>
+              )}
+              <Layout
+                style={{
+                  marginTop: 4,
+                  width: '100%',
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  gap: 16,
+                  justifyContent: 'center',
+                }}
+              >
+                {inventoryResult !== undefined &&
+                  inventoryResult.results.map((res) => (
+                    <Card
+                      key={res.VIN}
+                      style={styles.card}
+                      footer={props => CardFooter(res, props)}
+                    >
+                      <Text>{res.TrimName}</Text>
+                      {res.FederalIncentives.IsTaxIncentiveEligible && (
+                        <Layout 
+                          style={{ 
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            marginVertical: 4
+                          }}
+                        >
+                          <IconSymbol
+                            size={18}
+                            color="#808080"
+                            name="dollarsign.circle"
+                            style={{ marginRight: 2 }}
+                          />
+                          <Text>Tax Credit Eligible</Text>
+                        </Layout>
+                      )}
+                      {res.ADL_OPTS && res.ADL_OPTS.length > 0 && (
+                        <Text>{res.ADL_OPTS.join(', ')}</Text>
+                      )}
+                      {res.IsInTransit && <Text>In Transit</Text>}
+                    </Card>
+                  ))}
+              </Layout>
+            </>
           )}
         </Layout>
       </Layout>
@@ -247,5 +361,21 @@ const styles = StyleSheet.create({
   },
   radioText: {
     fontSize: 18
-  }
+  },
+  card: {
+    flex: 1,
+    margin: 8,
+    width: 300,
+    flexBasis: 300,
+    maxWidth: 350,
+    flexGrow: 1,
+  },
+  footerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  footerControl: {
+    marginHorizontal: 4,
+  },
 });

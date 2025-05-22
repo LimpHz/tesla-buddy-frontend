@@ -19,13 +19,14 @@
     "@expo/html-elements": "^0.4.2",
     "@expo/vector-icons": "^14.1.0",
     "@legendapp/motion": "^2.4.0",
-    "@limphz/tesla-api-utilities": "^0.1.15-alpha",
+    "@limphz/tesla-api-utilities": "^0.1.16-alpha",
     "@react-native-picker/picker": "2.11.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/drawer": "^7.3.12",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
     "@ui-kitten/components": "^5.3.1",
+    "@ui-kitten/eva-icons": "^5.3.1",
     "ajv": "^8.17.1",
     "babel-plugin-module-resolver": "^5.0.2",
     "expo": "~53.0.9",
@@ -55,7 +56,8 @@
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
     "tailwindcss": "^3.4.17",
-    "tslib": "^2.8.1"
+    "tslib": "^2.8.1",
+    "expo-clipboard": "~7.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

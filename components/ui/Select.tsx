@@ -59,7 +59,7 @@ export const Select: React.FC<SelectProps> = ({
                 minWidth: 150,
                 outline: 'none',
                 fontSize: 16,
-                fontFamily: 'inherit',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
             }}
         >
             <Picker.Item

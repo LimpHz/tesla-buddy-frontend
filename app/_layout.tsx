@@ -2,9 +2,10 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-import { ApplicationProvider } from '@ui-kitten/components';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import * as eva from '@eva-design/eva';
 import { ThemeProvider, useThemeContext } from './ThemeContext';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -35,8 +36,11 @@ export default function RootLayout() {
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
   const { theme } = useThemeContext();
   return (
-    <ApplicationProvider theme={theme === 'dark' ? eva.dark : eva.light} {...eva}>
-      {children}
-    </ApplicationProvider>
+    <>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider theme={theme === 'dark' ? eva.dark : eva.light} {...eva}>
+        {children}
+      </ApplicationProvider>
+    </>
   );
 }
