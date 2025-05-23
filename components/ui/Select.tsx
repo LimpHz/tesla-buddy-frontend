@@ -34,6 +34,7 @@ export const Select: React.FC<SelectProps> = ({
         <Text
             style={{
                 fontSize: 12,
+                fontWeight: 'bold',
                 color: theme['text-hint-color'],
                 marginLeft: 4,
                 marginBottom: 2,
