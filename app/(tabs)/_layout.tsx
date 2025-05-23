@@ -24,7 +24,13 @@ export default function DrawerLayout() {
           drawerType: Platform.OS === 'web' &&  typeof window !== 'undefined' && window.innerWidth >= 768 ? 'permanent' : 'slide',
           swipeEnabled: Platform.OS !== 'web',
           drawerStyle: {
-            maxWidth: 240,
+            maxWidth: Platform.OS === 'web' && typeof window !== 'undefined' && window.innerWidth >= 768 
+              ? 240  // Desktop width
+              : '85%',  // Mobile width as percentage of screen
+            width: Platform.OS === 'web' && typeof window !== 'undefined' && window.innerWidth >= 768 
+              ? 240 
+              : '85%',
+            height: '100%',  // Ensure height is 100% of container
             backgroundColor: Colors[theme ?? 'light'].background
           },
           drawerContentContainerStyle: {
