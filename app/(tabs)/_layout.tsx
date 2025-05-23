@@ -6,7 +6,8 @@ import IndexScreen from './index';
 import InventoryScreen from './inventory';
 import { Toggle } from '@ui-kitten/components';
 import { useThemeContext } from '../ThemeContext';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const { Navigator, Screen } = createDrawerNavigator();
 
@@ -14,68 +15,70 @@ export default function DrawerLayout() {
   const { theme, toggleTheme } = useThemeContext();
 
   return (
-    <Navigator
-      initialRouteName="home"
-      screenOptions={{
-        drawerActiveTintColor: Colors[theme ?? 'light'].tint,
-        headerShown: false,
-        drawerType: typeof window !== 'undefined' && window.innerWidth >= 768 ? 'permanent' : 'front',
-        drawerStyle: {
-          maxWidth: 240,
-          backgroundColor: Colors[theme ?? 'light'].background
-        },
-        drawerContentContainerStyle: {
-          paddingLeft: 0,
-          paddingRight: 0,
-        },
-        drawerItemStyle: {
-          marginTop: 8,
-          borderRadius: 0,
-        },
-        drawerInactiveTintColor: Colors[theme ?? 'light'].tint
-      }}
-      drawerContent={(props: any) => (
-        <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
-          <DrawerItemList {...props} />
-          <View style={{ flexDirection: 'row', alignItems: 'center', margin: 16, marginTop: 'auto', alignSelf: 'center' }}>
-            <Toggle
-              checked={theme === 'dark'}
-              onChange={toggleTheme}
-            >
-              {theme === 'dark' ? 'Dark' : 'Light'} Mode
-            </Toggle>
-          </View>
-        </DrawerContentScrollView>
-      )}
-    >
-      <Screen
-        name="home"
-        component={IndexScreen}
-        options={{
-          title: 'Home',
-          drawerIcon: ({ color, size }: { color: string; size: number }) => (
-            <IconSymbol size={size ?? 28} name="house.fill" color={color} />
-          ),
+    <SafeAreaProvider>
+      <Navigator
+        initialRouteName="home"
+        screenOptions={{
+          drawerActiveTintColor: Colors[theme ?? 'light'].tint,
+          headerShown: Platform.OS !== 'web',
+          drawerType: Platform.OS === 'web' &&  typeof window !== 'undefined' && window.innerWidth >= 768 ? 'permanent' : 'slide',
+          drawerStyle: {
+            maxWidth: 240,
+            backgroundColor: Colors[theme ?? 'light'].background
+          },
+          drawerContentContainerStyle: {
+            paddingLeft: 0,
+            paddingRight: 0,
+          },
+          drawerItemStyle: {
+            marginTop: 8,
+            borderRadius: 0,
+          },
+          drawerInactiveTintColor: Colors[theme ?? 'light'].tint
         }}
-      />
-      <Screen
-        name="inventory"
-        component={InventoryScreen}
-        options={{
-          title: 'Inventory',
-          drawerIcon: ({ color, size }: { color: string; size: number }) => (
-            <IconSymbol size={size ?? 28} name="mail.fill" color={color} />
-          ),
-        }}
-      />
-      <Screen
-        name="delivery-checklist"
-        component={Checklist}
-        options={{
-          title: 'Delivery Checklist',
-          drawerIcon: ({ color }) => <IconSymbol size={28} name="checklist" color={color} />,
-        }}
-      />
-    </Navigator>
+        drawerContent={(props: any) => (
+          <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
+            <DrawerItemList {...props} />
+            <View style={{ flexDirection: 'row', alignItems: 'center', margin: 16, marginTop: 'auto', alignSelf: 'center' }}>
+              <Toggle
+                checked={theme === 'dark'}
+                onChange={toggleTheme}
+              >
+                {theme === 'dark' ? 'Dark' : 'Light'} Mode
+              </Toggle>
+            </View>
+          </DrawerContentScrollView>
+        )}
+      >
+        <Screen
+          name="home"
+          component={IndexScreen}
+          options={{
+            title: 'Home',
+            drawerIcon: ({ color, size }: { color: string; size: number }) => (
+              <IconSymbol size={size ?? 28} name="house.fill" color={color} />
+            ),
+          }}
+        />
+        <Screen
+          name="inventory"
+          component={InventoryScreen}
+          options={{
+            title: 'Inventory',
+            drawerIcon: ({ color, size }: { color: string; size: number }) => (
+              <IconSymbol size={size ?? 28} name="mail.fill" color={color} />
+            ),
+          }}
+        />
+        <Screen
+          name="delivery-checklist"
+          component={Checklist}
+          options={{
+            title: 'Delivery Checklist',
+            drawerIcon: ({ color }) => <IconSymbol size={28} name="checklist" color={color} />,
+          }}
+        />
+      </Navigator>
+    </SafeAreaProvider>
   );
 }
