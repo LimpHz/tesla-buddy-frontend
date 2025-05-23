@@ -20,7 +20,7 @@ export default function DrawerLayout() {
         initialRouteName="home"
         screenOptions={{
           drawerActiveTintColor: Colors[theme ?? 'light'].tint,
-          headerShown: Platform.OS !== 'web' ? true : false,
+          headerShown: Platform.OS !== 'web' || (typeof window !== 'undefined' && window.innerWidth < 768),
           drawerType: Platform.OS === 'web' &&  typeof window !== 'undefined' && window.innerWidth >= 768 ? 'permanent' : 'slide',
           swipeEnabled: Platform.OS !== 'web',
           drawerStyle: {
