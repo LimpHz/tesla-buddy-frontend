@@ -41,7 +41,14 @@ export default function DrawerLayout() {
             marginTop: 8,
             borderRadius: 0,
           },
-          drawerInactiveTintColor: Colors[theme ?? 'light'].tint
+          drawerInactiveTintColor: Colors[theme ?? 'light'].tint,
+          headerStyle: {
+            backgroundColor: Colors[theme ?? 'light'].background,
+          },
+          headerTintColor: Colors[theme ?? 'light'].tint,
+          headerTitleStyle: {
+            color: Colors[theme ?? 'light'].text,
+          },
         }}
         drawerContent={(props: any) => (
           <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
