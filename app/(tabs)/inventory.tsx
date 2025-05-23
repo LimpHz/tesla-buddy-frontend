@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Linking, StyleSheet, View, ViewProps } from 'react-native';
 import { TeslaInventoryService } from '../services/tesla-inventory.service';
 import { Select } from '@/components/ui/Select';
-import { InventoryResponse, Vehicle } from '@limphz/tesla-api-utilities/models';
+import { InventoryResponse, OptionCodeData, Vehicle } from '@limphz/tesla-api-utilities/models';
 import { setStringAsync } from 'expo-clipboard';  
 
 export default function InventoryScreen() {
@@ -84,6 +84,38 @@ export default function InventoryScreen() {
     return `https://www.tesla.com/${model}/order/${vin}?titleStatus=${condition}${referral !== '' ? `&referral=${referral}` : ''}&redirect=no#overview`;
   }
 
+  const CardHeader = (res: Vehicle, props?: ViewProps): React.ReactElement => (
+    <View {...props} style={[props?.style, {padding: 12}]}>
+      <Layout
+        style={{ 
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%'
+        }}
+      >
+        <Text style={{ fontWeight: 'bold' }}>
+          {res.TrimName}
+        </Text>
+        {res.IsInTransit && (
+          <Text
+            style={{ 
+              fontSize: 10,
+              color: '#0a7ea4',
+              fontWeight: 'bold',
+              backgroundColor: '#e6f7ff',
+              paddingHorizontal: 6,
+              paddingVertical: 2,
+              borderRadius: 4
+            }}
+          >
+            In Transit
+          </Text>
+        )}
+      </Layout>
+    </View>
+  );
+
   const CardFooter = (res: Vehicle, props?: ViewProps): React.ReactElement => (
     <View
       {...props}
@@ -129,6 +161,54 @@ export default function InventoryScreen() {
       </Layout>
     </View>
   );
+
+  const paintColorMap: Record<string, string> = {
+    'Pearl White Multi-Coat': '#f2f5f5',
+    'Solid Black': '#000000',
+    'Deep Blue Metallic': '#0a2c5e',
+    'Midnight Silver Metallic': '#535353',
+    'Red Multi-Coat': '#af0f0f',
+    'Ultra Red': '#cc0000',
+    'Stealth Grey': '#4a4e4d',
+    'Diamond Black': '#000000',
+    'Quicksilver': '#a6a8a7',
+    'Lunar Silver': '#b7b8b7',
+  };
+
+  const interiorColorMap: Record<string, string> = {
+    'All Black': '#000000',
+    'White': '#ffffff',
+    'Cream': '#f2e6d4',
+    'Black and White': '#000000',
+    'Black and Cream': '#000000',
+    'Ebony Decor': '#000000',
+  };
+
+  const getInteriorColor = (interiorName?: string): string => {
+    const defaultColor = '#ccc';
+
+    if (!interiorName) return defaultColor;
+    
+    for (const [key, color] of Object.entries(interiorColorMap)) {
+      if (interiorName.toLowerCase().includes(key.toLowerCase())) {
+        return color;
+      }
+    }
+    
+    return defaultColor;
+  };
+
+  function removeOptionCodeExclusions(option: OptionCodeData): boolean {
+    const groupExclusions: string[] = ['MODEL', 'MODEL\''];
+    const codeExclusions: string[] = [
+      '$SC04', // Pay-as-you-go Supercharging
+      '$CPF0', // Standard Connectivity
+      '$APBS', // Basic Autopilot
+    ];
+
+    return groupExclusions.indexOf(option.group) >= 0 ||
+      codeExclusions.indexOf(option.code) >= 0;
+  }
 
   return (
     <ParallaxScrollView
@@ -193,7 +273,7 @@ export default function InventoryScreen() {
               <Text style={{ color: condition === value ? '#fff' : '#0a7ea4' }}>{key}</Text>
             </Button>
           ))}
-          <Input placeholder='Referral Code' value={referral} onChangeText={setReferral}></Input>
+          <Input placeholder='Referral Code' label='Referral Code' value={referral} onChangeText={setReferral}></Input>
           <CheckBox
             checked={showFederalTaxCredit}
             onChange={setShowFederalTaxCredit}
@@ -236,8 +316,8 @@ export default function InventoryScreen() {
             onSelect={(value) => {console.log("Market set: " + value); setMarket(value)}}
             value={market}
           />
-          <Input placeholder="Language" value={language} onChangeText={setLanguage} disabled={true} />
-          <Input placeholder="Super Region" value={superRegion} onChangeText={setSuperRegion} disabled={true} />
+          <Input placeholder="Language" label='Language' value={language} onChangeText={setLanguage} disabled={true} />
+          <Input placeholder="Super Region" label='Super Region' value={superRegion} onChangeText={setSuperRegion} disabled={true} />
           <Select
             placeholder='Payment Type'
             options={
@@ -248,8 +328,8 @@ export default function InventoryScreen() {
             onSelect={(value) => setPaymentType(value)}
             value={paymentType}
           />
-          <Input placeholder="Payment Range" value={paymentRange} onChangeText={setPaymentRange} />
-          <Input placeholder="Zip" value={zip} onChangeText={setZip} />
+          <Input placeholder="Payment Range" label='Payment Range' value={paymentRange} onChangeText={setPaymentRange} />
+          <Input placeholder="ZIP" label='ZIP' value={zip} onChangeText={setZip} />
           <Select
             placeholder='Region'
             options={
@@ -296,30 +376,55 @@ export default function InventoryScreen() {
                     <Card
                       key={res.VIN}
                       style={styles.card}
+                      header={props => CardHeader(res, props)}
                       footer={props => CardFooter(res, props)}
                     >
-                      <Text>{res.TrimName}</Text>
-                      {res.FederalIncentives.IsTaxIncentiveEligible && (
-                        <Layout 
-                          style={{ 
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            marginVertical: 4
-                          }}
-                        >
-                          <IconSymbol
-                            size={18}
-                            color="#808080"
-                            name="dollarsign.circle"
-                            style={{ marginRight: 2 }}
-                          />
-                          <Text>Tax Credit Eligible</Text>
+                      {res.OptionCodeList && res.OptionCodeList.length > 0 && (
+                        <Layout style={{ marginTop: 8 }}>
+                          {res.OptionCodeList.split(',').map(code => {
+                            const option = res.OptionCodeData.find(o => o.code === code);
+                            if (!option || !option.name || removeOptionCodeExclusions(option)) return null;
+                            
+                            const shouldShowColorCircle = ['PAINT', 'INTERIOR', 'INTERIOR_COLORWAY'].includes(option.group);
+                            let circleColor = '#ccc';
+                            
+                            if (option.group === 'PAINT') {
+                              circleColor = paintColorMap[option.name] || '#ccc';
+                            } else if (option.group === 'INTERIOR' || option.group === 'INTERIOR_COLORWAY') {
+                              circleColor = getInteriorColor(option.name);
+                            }
+                            
+                            return (
+                              <Layout 
+                                key={code} 
+                                style={{ 
+                                  flexDirection: 'row',
+                                  alignItems: 'center',
+                                  marginBottom: 4
+                                }}
+                              >
+                                {shouldShowColorCircle && (
+                                  <View
+                                    style={{
+                                      width: 10,
+                                      height: 10,
+                                      borderRadius: 5,
+                                      backgroundColor: circleColor,
+                                      borderWidth: 1,
+                                      borderColor: '#ddd',
+                                      marginRight: 6,
+                                      marginLeft: 2,
+                                    }}
+                                  />
+                                )}
+                                <Text style={{ fontSize: 11 }}>
+                                  {option.name} <Text style={{ color: '#888', fontSize: 10 }}>({option.group})</Text> <Text style={{ color: '#888', fontSize: 10 }}>({option.code})</Text>
+                                </Text>
+                              </Layout>
+                            );
+                          }).filter(Boolean)}
                         </Layout>
                       )}
-                      {res.ADL_OPTS && res.ADL_OPTS.length > 0 && (
-                        <Text>{res.ADL_OPTS.join(', ')}</Text>
-                      )}
-                      {res.IsInTransit && <Text>In Transit</Text>}
                     </Card>
                   ))}
               </Layout>
