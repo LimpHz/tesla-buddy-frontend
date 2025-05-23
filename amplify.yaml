@@ -5,6 +5,7 @@ frontend:
       commands:
         - npm install --quiet --global expo-cli
         - echo "@limphz:registry=https://npm.pkg.github.com" > .npmrc
+        - echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
         - >
           if [ -f yarn.lock ]; then
             yarn
