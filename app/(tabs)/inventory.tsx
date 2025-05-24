@@ -238,7 +238,7 @@ export default function InventoryScreen() {
                 }
               ]}
             >
-              <Text style={{ color: model === option.value ? '#fff' : '#0a7ea4' }}>{option.name}</Text>
+              {option.name}
             </Button>
           ))}
         </Layout>
