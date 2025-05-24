@@ -6,6 +6,12 @@ frontend:
         - npm install --quiet --global expo-cli
         - echo "@limphz:registry=https://npm.pkg.github.com" > .npmrc
         - echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+        # Create environment configuration file with build-time variables
+        - echo "Creating environment configuration..."
+        - |
+          cat << EOF > .env
+          EXPO_PUBLIC_TESLA_API_BASE_URL=${EXPO_PUBLIC_API_URL}
+          EOF
         - >
           if [ -f yarn.lock ]; then
             yarn
