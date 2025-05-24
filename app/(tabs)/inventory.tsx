@@ -262,7 +262,7 @@ export default function InventoryScreen() {
             onChange={setShowFederalTaxCredit}
             style={{ marginHorizontal: 28 }}
           >
-            Show pricing after federal tax credit
+            Include federal tax credit
           </CheckBox>
         </Layout>
         <Layout style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
