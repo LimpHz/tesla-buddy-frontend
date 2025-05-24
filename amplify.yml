@@ -10,7 +10,7 @@ frontend:
         - echo "Creating environment configuration..."
         - |
           cat << EOF > .env
-          EXPO_PUBLIC_TESLA_API_BASE_URL=${EXPO_PUBLIC_API_URL}
+          EXPO_PUBLIC_TESLA_API_BASE_URL=${EXPO_PUBLIC_TESLA_API_BASE_URL}
           EOF
         - >
           if [ -f yarn.lock ]; then
