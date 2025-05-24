@@ -230,13 +230,8 @@ export default function InventoryScreen() {
             <Button
               key={option.name}
               onPress={() => setModel(option.value)}
-              style={[
-                styles.button,
-                {
-                  backgroundColor: model === option.value ? styles.button.backgroundColor : 'transparent',
-                  minWidth: 150
-                }
-              ]}
+              status={model === option.value ? 'primary' : 'basic'}
+              style={{ minWidth: 150 }}
             >
               {option.name}
             </Button>
@@ -246,31 +241,19 @@ export default function InventoryScreen() {
           {Object.entries(Conditions).map(([key, value]) => (
             <Button
               key={key}
+              status={condition === value ? 'primary' : 'basic'}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 marginRight: 12,
                 padding: 6,
                 borderWidth: 1,
-                borderColor: condition === value ? '#0a7ea4' : '#ccc',
                 borderRadius: 16,
-                backgroundColor: condition === value ? '#0a7ea4' : 'transparent',
                 height: 16
               }}
               onPress={() => setCondition(value)}
             >
-              <Layout
-                style={{
-                  height: 12,
-                  width: 12,
-                  borderRadius: 8,
-                  borderWidth: 2,
-                  borderColor: condition === value ? '#fff' : '#0a7ea4',
-                  backgroundColor: condition === value ? '#fff' : 'transparent',
-                  marginRight: 6,
-                }}
-              />
-              <Text style={{ color: condition === value ? '#fff' : '#0a7ea4' }}>{key}</Text>
+              {key}
             </Button>
           ))}
           <Input placeholder='Referral Code' label='Referral Code' value={referral} onChangeText={setReferral}></Input>
