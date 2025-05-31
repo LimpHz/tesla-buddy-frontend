@@ -133,30 +133,35 @@ export default function DrawerLayout() {
   };
 
   const DrawerContent = ({ navigation, state }: any) => (
-    <Drawer
-      selectedIndex={selectedIndex}
-      onSelect={handleSelect}
-      style={styles.drawer}
-    >
-      <DrawerItem
-        title="Home"
-        accessoryLeft={HomeIcon}
-      />
-      <DrawerItem
-        title="Inventory"
-        accessoryLeft={InventoryIcon}
-      />
-      <DrawerItem
-        title="Delivery Checklist"
-        accessoryLeft={ChecklistIcon}
-      />
-      <DrawerItem
-        title="Contact Us"
-        accessoryLeft={ContactIcon}
-      />
+    <View style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <Drawer
+        selectedIndex={selectedIndex}
+        onSelect={handleSelect}
+        style={styles.drawer}
+      >
+        <DrawerItem
+          title="Home"
+          accessoryLeft={HomeIcon}
+        />
+        <DrawerItem
+          title="Inventory"
+          accessoryLeft={InventoryIcon}
+        />
+        <DrawerItem
+          title="Delivery Checklist"
+          accessoryLeft={ChecklistIcon}
+        />
+        <DrawerItem
+          title="Contact Us"
+          accessoryLeft={ContactIcon}
+        />
+      </Drawer>
       
-      <ThemeToggle />
-    </Drawer>
+      {/* ThemeToggle positioned at the bottom */}
+      <View style={styles.themeToggleContainer}>
+        <ThemeToggle />
+      </View>
+    </View>
   );
   
   // Convert React Navigation Screen to Expo Router compatible
@@ -174,8 +179,8 @@ export default function DrawerLayout() {
       <SafeAreaView style={{ flex: 1 }}>
         {isMobile ? (
           // Mobile layout with React Navigation Drawer
-          <Layout style={{ flex: 1 }}>
             <Navigator
+              initialRouteName="index"
               drawerContent={props => <DrawerContent {...props} />}
               screenOptions={{
                 headerShown: true,
@@ -247,7 +252,6 @@ export default function DrawerLayout() {
                 }}
               />
             </Navigator>
-          </Layout>
         ) : (
           // Desktop layout with permanent menu
           <Layout style={styles.desktopContainer}>
@@ -275,7 +279,10 @@ export default function DrawerLayout() {
                 />
               </Menu>
               
-              <ThemeToggle />
+              {/* ThemeToggle positioned at the bottom */}
+              <View style={styles.themeToggleContainer}>
+                <ThemeToggle />
+              </View>
             </View>
             
             <View style={styles.contentContainer}>
@@ -343,11 +350,11 @@ const styles = StyleSheet.create({
   },
   themeToggleContainer: {
     padding: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
     borderTopWidth: 1,
     borderTopColor: '#E8E8E8',
-    marginTop: 'auto',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 'auto', // Push to bottom in flex container
   },
   themeToggle: {
     marginTop: 8,
