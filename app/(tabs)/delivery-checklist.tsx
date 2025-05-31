@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { ActivityIndicator, StyleSheet } from 'react-native';
 
-export default function Checklist() {
+export default function DeliveryChecklist() {
     const [markdownContent, setMarkdownContent] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
 
