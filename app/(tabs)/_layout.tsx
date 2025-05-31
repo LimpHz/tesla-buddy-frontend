@@ -222,16 +222,16 @@ export default function DrawerLayout() {
                   title: 'Home',
                   drawerIcon: HomeIcon,
                 }}
-                listeners={{
-                  focus: () => {
-                    setSelectedIndex(new IndexPath(0));
-                  },
-                  drawerItemPress: (e) => {
-                    // Prevent default behavior
-                    e.preventDefault();
-                    router.push('/(tabs)' as Href);
-                  }
-                }}
+                // listeners={{
+                //   focus: () => {
+                //     setSelectedIndex(new IndexPath(0));
+                //   },
+                //   drawerItemPress: (e) => {
+                //     // Prevent default behavior
+                //     e.preventDefault();
+                //     router.push('/(tabs)' as Href);
+                //   }
+                // }}
               />
               <Screen
                 name="inventory"
@@ -240,13 +240,13 @@ export default function DrawerLayout() {
                   title: 'Inventory',
                   drawerIcon: InventoryIcon,
                 }}
-                listeners={{
-                  drawerItemPress: (e) => {
-                    // Prevent default behavior
-                    e.preventDefault();
-                    router.push('/(tabs)/inventory' as Href);
-                  }
-                }}
+                // listeners={{
+                //   drawerItemPress: (e) => {
+                //     // Prevent default behavior
+                //     e.preventDefault();
+                //     router.push('/(tabs)/inventory' as Href);
+                //   }
+                // }}
               />
               <Screen
                 name="delivery-checklist"
@@ -255,13 +255,13 @@ export default function DrawerLayout() {
                   title: 'Delivery Checklist',
                   drawerIcon: ChecklistIcon,
                 }}
-                listeners={{
-                  drawerItemPress: (e) => {
-                    // Prevent default behavior
-                    e.preventDefault();
-                    router.push('/(tabs)/delivery-checklist' as Href);
-                  }
-                }}
+                // listeners={{
+                //   drawerItemPress: (e) => {
+                //     // Prevent default behavior
+                //     e.preventDefault();
+                //     router.push('/(tabs)/delivery-checklist' as Href);
+                //   }
+                // }}
               />
               <Screen
                 name="contact-us"
@@ -270,13 +270,13 @@ export default function DrawerLayout() {
                   title: 'Contact Us',
                   drawerIcon: ContactIcon,
                 }}
-                listeners={{
-                  drawerItemPress: (e) => {
-                    // Prevent default behavior
-                    e.preventDefault();
-                    router.push('/(tabs)/contact-us' as Href);
-                  }
-                }}
+                // listeners={{
+                //   drawerItemPress: (e) => {
+                //     // Prevent default behavior
+                //     e.preventDefault();
+                //     router.push('/(tabs)/contact-us' as Href);
+                //   }
+                // }}
               />
             </Navigator>
         ) : (
