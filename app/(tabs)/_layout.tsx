@@ -177,7 +177,7 @@ export default function DrawerLayout() {
           backgroundColor: themeStyles.backgroundColor
         }
       ]}>
-        {/* <ThemeToggle /> */}
+        <ThemeToggle />
       </View>
     </View>
   );
@@ -320,7 +320,7 @@ export default function DrawerLayout() {
                   backgroundColor: themeStyles.backgroundColor
                 }
               ]}>
-                {/* <ThemeToggle /> */}
+                <ThemeToggle />
               </View>
             </View>
             
