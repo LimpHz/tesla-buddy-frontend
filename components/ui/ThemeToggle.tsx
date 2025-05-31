@@ -23,8 +23,6 @@ const styles = StyleSheet.create({
     padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#E8E8E8',
     marginTop: 'auto',
   },
   themeToggle: {

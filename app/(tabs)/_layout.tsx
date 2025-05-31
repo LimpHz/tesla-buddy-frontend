@@ -132,12 +132,25 @@ export default function DrawerLayout() {
     router.push(route as Href);
   };
 
+  // Determine the appropriate theme styles based on the current theme
+  const themeStyles = {
+    backgroundColor: theme === 'dark' ? '#222B45' : 'white',
+    textColor: theme === 'dark' ? 'white' : '#222B45',
+    borderColor: theme === 'dark' ? '#101426' : '#E8E8E8',
+  };
+
   const DrawerContent = ({ navigation, state }: any) => (
-    <View style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <View style={{ 
+      flex: 1, 
+      display: 'flex', 
+      flexDirection: 'column',
+      backgroundColor: themeStyles.backgroundColor
+    }}>
       <Drawer
         selectedIndex={selectedIndex}
         onSelect={handleSelect}
-        style={styles.drawer}
+        style={[styles.drawer, { backgroundColor: themeStyles.backgroundColor }]}
+        appearance={theme === 'dark' ? 'noDivider' : 'default'}
       >
         <DrawerItem
           title="Home"
@@ -157,8 +170,13 @@ export default function DrawerLayout() {
         />
       </Drawer>
       
-      {/* ThemeToggle positioned at the bottom */}
-      <View style={styles.themeToggleContainer}>
+      <View style={[
+        styles.themeToggleContainer, 
+        { 
+          borderTopColor: themeStyles.borderColor,
+          backgroundColor: themeStyles.backgroundColor
+        }
+      ]}>
         <ThemeToggle />
       </View>
     </View>
@@ -185,7 +203,16 @@ export default function DrawerLayout() {
               screenOptions={{
                 headerShown: true,
                 swipeEnabled: true,
-                headerTitleAlign: 'center'
+                headerTitleAlign: 'center',
+                headerStyle: {
+                  backgroundColor: themeStyles.backgroundColor,
+                },
+                headerTintColor: themeStyles.textColor,
+                drawerStyle: {
+                  backgroundColor: themeStyles.backgroundColor,
+                },
+                drawerActiveTintColor: theme === 'dark' ? '#3366FF' : '#3366FF',
+                drawerInactiveTintColor: themeStyles.textColor,
               }}
             >
               <Screen
@@ -254,12 +281,19 @@ export default function DrawerLayout() {
             </Navigator>
         ) : (
           // Desktop layout with permanent menu
-          <Layout style={styles.desktopContainer}>
-            <View style={styles.desktopSidebar}>
+          <Layout style={styles.desktopContainer} level={theme === 'dark' ? '2' : '1'}>
+            <View style={[
+              styles.desktopSidebar,
+              { 
+                backgroundColor: themeStyles.backgroundColor,
+                borderRightColor: themeStyles.borderColor
+              }
+            ]}>
               <Menu
                 selectedIndex={selectedIndex}
                 onSelect={handleSelect}
-                style={styles.menu}
+                style={[styles.menu, { backgroundColor: themeStyles.backgroundColor }]}
+                appearance={theme === 'dark' ? 'noDivider' : 'default'}
               >
                 <MenuItem
                   title="Home"
@@ -279,13 +313,21 @@ export default function DrawerLayout() {
                 />
               </Menu>
               
-              {/* ThemeToggle positioned at the bottom */}
-              <View style={styles.themeToggleContainer}>
+              <View style={[
+                styles.themeToggleContainer, 
+                { 
+                  borderTopColor: themeStyles.borderColor,
+                  backgroundColor: themeStyles.backgroundColor
+                }
+              ]}>
                 <ThemeToggle />
               </View>
             </View>
             
-            <View style={styles.contentContainer}>
+            <View style={[
+              styles.contentContainer,
+              { backgroundColor: themeStyles.backgroundColor }
+            ]}>
               {renderContent()}
             </View>
           </Layout>
