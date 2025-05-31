@@ -8,12 +8,16 @@ import {
   Menu,
   MenuItem,
   Layout,
+  TopNavigation,
+  TopNavigationAction,
+  Divider
 } from '@ui-kitten/components';
 import { useThemeContext } from '../ThemeContext';
 import { Platform, StyleSheet, View } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import ContactUs from './contact-us';
-import { useRouter, usePathname, Href } from 'expo-router';
-import { useState } from 'react';
+import { useRouter, usePathname, Href, Link } from 'expo-router';
+import { useState, useEffect } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import HomeScreen from './index';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
@@ -189,7 +193,8 @@ export default function DrawerLayout() {
   };
 
   return (
-    <>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
         {isMobile ? (
           // Mobile layout with React Navigation Drawer
             <Navigator
@@ -327,7 +332,8 @@ export default function DrawerLayout() {
             </View>
           </Layout>
         )}
-    </>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
