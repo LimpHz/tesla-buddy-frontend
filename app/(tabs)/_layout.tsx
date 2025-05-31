@@ -10,23 +10,22 @@ import {
   Layout,
   TopNavigation,
   TopNavigationAction,
-  Divider,
-  Toggle
+  Divider
 } from '@ui-kitten/components';
 import { useThemeContext } from '../ThemeContext';
 import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import ContactUs from './contact-us';
-import { useRouter, usePathname, Href } from 'expo-router';
-import { useState } from 'react';
-import { createDrawerNavigator, DrawerContentComponentProps } from '@react-navigation/drawer';
+import { useRouter, usePathname, Href, Link } from 'expo-router';
+import { useState, useEffect } from 'react';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import HomeScreen from './index';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 const { Navigator, Screen } = createDrawerNavigator();
 
 export default function DrawerLayout() {
-  const { theme, toggleTheme } = useThemeContext();
+  const { theme } = useThemeContext();
   const router = useRouter();
   const pathname = usePathname();
   const [selectedIndex, setSelectedIndex] = useState(getInitialSelectedIndex());
@@ -105,7 +104,35 @@ export default function DrawerLayout() {
     }
   };
 
-  const DrawerContent = ({ navigation, state }: DrawerContentComponentProps) => (
+  // Custom navigation logic for React Navigation screens
+  const handleScreenPress = (routeName: string) => {
+    let route = '';
+    let index = 0;
+    
+    switch(routeName) {
+      case 'home':
+        route = '/(tabs)';
+        index = 0;
+        break;
+      case 'inventory':
+        route = '/(tabs)/inventory';
+        index = 1;
+        break;
+      case 'delivery-checklist':
+        route = '/(tabs)/delivery-checklist';
+        index = 2;
+        break;
+      case 'contact-us':
+        route = '/(tabs)/contact-us';
+        index = 3;
+        break;
+    }
+    
+    setSelectedIndex(new IndexPath(index));
+    router.push(route as Href);
+  };
+
+  const DrawerContent = ({ navigation, state }: any) => (
     <Drawer
       selectedIndex={selectedIndex}
       onSelect={handleSelect}
@@ -132,18 +159,46 @@ export default function DrawerLayout() {
     </Drawer>
   );
   
+  // Convert React Navigation Screen to Expo Router compatible
+  const ScreenWithRouter = ({ name, component: Component }: { name: string, component: React.ComponentType<any> }) => {
+    return (
+      <Component 
+        onPress={() => handleScreenPress(name)}
+        active={pathname === `/(tabs)/${name}` || (name === 'home' && pathname === '/(tabs)')}
+      />
+    );
+  };
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
         {isMobile ? (
-          // Mobile layout with collapsible drawer
+          // Mobile layout with React Navigation Drawer
           <Layout style={{ flex: 1 }}>
-            <Navigator drawerContent={props => <DrawerContent {...props} />}>
+            <Navigator
+              drawerContent={props => <DrawerContent {...props} />}
+              screenOptions={{
+                headerShown: true,
+                swipeEnabled: true,
+                headerTitleAlign: 'center'
+              }}
+            >
               <Screen
-                name="home"
-                component={HomeScreen}
+                name="index"
+                component={() => <HomeScreen />}
                 options={{
                   title: 'Home',
+                  drawerIcon: HomeIcon,
+                }}
+                listeners={{
+                  focus: () => {
+                    setSelectedIndex(new IndexPath(0));
+                  },
+                  drawerItemPress: (e) => {
+                    // Prevent default behavior
+                    e.preventDefault();
+                    router.push('/(tabs)' as Href);
+                  }
                 }}
               />
               <Screen
@@ -151,6 +206,14 @@ export default function DrawerLayout() {
                 component={InventoryScreen}
                 options={{
                   title: 'Inventory',
+                  drawerIcon: InventoryIcon,
+                }}
+                listeners={{
+                  drawerItemPress: (e) => {
+                    // Prevent default behavior
+                    e.preventDefault();
+                    router.push('/(tabs)/inventory' as Href);
+                  }
                 }}
               />
               <Screen
@@ -158,6 +221,14 @@ export default function DrawerLayout() {
                 component={DeliveryChecklist}
                 options={{
                   title: 'Delivery Checklist',
+                  drawerIcon: ChecklistIcon,
+                }}
+                listeners={{
+                  drawerItemPress: (e) => {
+                    // Prevent default behavior
+                    e.preventDefault();
+                    router.push('/(tabs)/delivery-checklist' as Href);
+                  }
                 }}
               />
               <Screen
@@ -165,14 +236,17 @@ export default function DrawerLayout() {
                 component={ContactUs}
                 options={{
                   title: 'Contact Us',
+                  drawerIcon: ContactIcon,
+                }}
+                listeners={{
+                  drawerItemPress: (e) => {
+                    // Prevent default behavior
+                    e.preventDefault();
+                    router.push('/(tabs)/contact-us' as Href);
+                  }
                 }}
               />
             </Navigator>
-            
-            
-            {/* <Layout style={styles.contentContainer}>
-              {renderContent()}
-            </Layout> */}
           </Layout>
         ) : (
           // Desktop layout with permanent menu
