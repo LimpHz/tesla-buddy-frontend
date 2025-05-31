@@ -8,6 +8,7 @@ import { Toggle } from '@ui-kitten/components';
 import { useThemeContext } from '../ThemeContext';
 import { Platform, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import ContactUs from './contact-us';
 
 const { Navigator, Screen } = createDrawerNavigator();
 
@@ -90,6 +91,14 @@ export default function DrawerLayout() {
           options={{
             title: 'Delivery Checklist',
             drawerIcon: ({ color }) => <IconSymbol size={28} name="checklist" color={color} />,
+          }}
+        />
+        <Screen
+          name="contact"
+          component={ContactUs}
+          options={{
+            title: 'Contact Us',
+            drawerIcon: ({ color }) => <IconSymbol size={28} name="message.circle.fill" color={color} />,
           }}
         />
       </Navigator>

@@ -1,7 +1,5 @@
 import React from 'react';
-import { Platform } from 'react-native';
-import { useTheme, Layout, Text, Icon } from '@ui-kitten/components';
-import { IconSymbol } from './IconSymbol';
+import { useTheme, Layout, Text } from '@ui-kitten/components';
 import { Picker } from '@react-native-picker/picker';
 
 interface Option {
@@ -18,32 +16,47 @@ interface SelectProps {
   style?: any;
 }
 
+const defaultPlaceholder = 'Select...';
+
 export const Select: React.FC<SelectProps> = ({
   label,
-  placeholder = 'Select...',
+  placeholder = defaultPlaceholder,
   value,
   onSelect,
   options,
   style,
 }) => {
-    const theme = useTheme();  
-    const [visible, setVisible] = React.useState(false);
-  
+    const theme = useTheme();
+
   return (
     <Layout style={{ position: 'relative' }}>
-        <Text
-            style={{
-                fontSize: 12,
-                fontWeight: 'bold',
-                color: theme['text-hint-color'],
-                marginLeft: 4,
-                marginBottom: 2,
-                minHeight: 16,
-                opacity: placeholder !== '' && placeholder !== 'Select...' && value !== undefined ? 1 : 0
-            }}
-        >
-            {placeholder}
-        </Text>
+        {label && (
+            <Text
+                style={{
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                    color: theme['text-basic-color'],
+                    marginBottom: 4,
+                    marginTop: 4,
+                }}
+            >
+                {label}
+            </Text>
+        )}
+        {placeholder && placeholder !== '' && placeholder !== defaultPlaceholder && value !== undefined && (
+            <Text
+                style={{
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    color: theme['text-hint-color'],
+                    marginLeft: 4,
+                    marginBottom: 2,
+                    minHeight: 16,
+                }}
+            >
+                {placeholder}
+            </Text>
+        )}
         <Picker
             selectedValue={value}
             onValueChange={(value, index) => {

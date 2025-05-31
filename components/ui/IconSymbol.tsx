@@ -23,6 +23,7 @@ const MAPPING = {
   'chevron.down': 'arrow-drop-down',
   'chevron.up': 'arrow-drop-up',
   'dollarsign.circle': 'attach-money',
+  'message.circle.fill': 'message',
 } as IconMapping;
 
 /**
