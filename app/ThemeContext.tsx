@@ -1,47 +1,63 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { ColorSchemeName } from 'react-native';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { useColorScheme } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type ThemeContextType = {
-  theme: ColorSchemeName;
+type Theme = 'light' | 'dark';
+
+interface ThemeContextType {
+  theme: Theme;
   toggleTheme: () => void;
-};
+  isThemeReady: boolean; // Add this to track hydration
+}
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const THEME_KEY = 'theme';
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const systemColorScheme = useColorScheme();
-  const [theme, setTheme] = useState<ColorSchemeName>(systemColorScheme);
+  const [theme, setTheme] = useState<Theme>('light'); // Consistent initial value for SSR
+  const [isThemeReady, setIsThemeReady] = useState(false);
+  const colorScheme = useColorScheme();
 
-  // On mount, check for stored theme
   useEffect(() => {
-    (async () => {
-      const storedTheme = localStorage.getItem(THEME_KEY);
-      if (storedTheme === 'light' || storedTheme === 'dark') {
-        setTheme(storedTheme);
+    // Only run on client side
+    const loadTheme = async () => {
+      try {
+        const savedTheme = await AsyncStorage.getItem('theme');
+        if (savedTheme) {
+          setTheme(savedTheme as Theme);
+        } else if (colorScheme) {
+          setTheme(colorScheme as Theme);
+        }
+      } catch (error) {
+        console.log('Error loading theme:', error);
+      } finally {
+        setIsThemeReady(true);
       }
-    })();
-  }, []);
+    };
 
-  // When theme changes, update storage
-  useEffect(() => {
-    if (!theme) return;
-    localStorage.setItem(THEME_KEY, theme);
-  }, [theme]);
+    loadTheme();
+  }, [colorScheme]);
 
-  const toggleTheme = () => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  const toggleTheme = async () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    try {
+      await AsyncStorage.setItem('theme', newTheme);
+    } catch (error) {
+      console.log('Error saving theme:', error);
+    }
+  };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, isThemeReady }}>
       {children}
     </ThemeContext.Provider>
   );
 }
 
 export function useThemeContext() {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useThemeContext must be used within ThemeProvider');
-  return ctx;
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useThemeContext must be used within a ThemeProvider');
+  }
+  return context;
 }
